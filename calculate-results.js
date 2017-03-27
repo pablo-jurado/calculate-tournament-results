@@ -4,7 +4,8 @@ function calculateResultsArray (tournament) {
   function getCollection (obj) {
     var arr = []
     for (var prop in obj) {
-      arr.push(obj[prop])
+      arr.push({[prop]: obj[prop]})
+      //  console.log(obj)
     }
     return arr
   }
@@ -12,7 +13,7 @@ function calculateResultsArray (tournament) {
   var games = getCollection(tournament.games)
   var teams = getCollection(tournament.teams)
 
-  // console.log(games)
+// console.log(games)
   console.log(teams)
 }
 
