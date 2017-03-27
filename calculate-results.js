@@ -1,20 +1,27 @@
 function calculateResultsArray (tournament) {
   // TODO: your code goes here
 
-  function getCollection (obj) {
+  function getTeams (obj) {
     var arr = []
     for (var prop in obj) {
       arr.push({[prop]: obj[prop]})
-      //  console.log(obj)
     }
     return arr
   }
 
-  var games = getCollection(tournament.games)
-  var teams = getCollection(tournament.teams)
+  function getGames (obj) {
+    var arr = []
+    for (var prop in obj) {
+      arr.push(obj[prop])
+    }
+    return arr
+  }
 
-// console.log(games)
-  console.log(teams)
+  var games = getGames(tournament.games)
+  var teams = getTeams(tournament.teams)
+
+  console.log('team 1!!!', teams[0].team1)
+  console.log(games[0]['teamB-id'])
 }
 
 function calculateResultsObject (tournament) {
