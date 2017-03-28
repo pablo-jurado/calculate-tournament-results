@@ -1,21 +1,15 @@
 function calculateResultsArray (tournament) {
   // TODO: your code goes here
 
-  function getTeams (obj) {
-    var arr = []
-    for (var prop in obj) {
-      arr.push({[prop]: obj[prop]})
-    }
-    return arr
-  }
-
-  function getGames (obj) {
-    var arr = []
-    for (var prop in obj) {
-      arr.push(obj[prop])
-    }
-    return arr
-  }
+  // function getData (obj) {
+  //   var arr = []
+  //   for (var prop in obj) {
+  //     arr.push({[prop]: obj[prop]})
+  //   }
+  //   return arr
+  // }
+  // var games = getData(tournament.games)
+  // var teams = getData(tournament.teams)
 
   function getWinners (game) {
     if (game.scoreA > game.scoreB) return { [game['teamA-id']]: game.scoreA }
@@ -26,22 +20,24 @@ function calculateResultsArray (tournament) {
     if (game.scoreA < game.scoreB) return { [game['teamA-id']]: game.scoreA }
     if (game.scoreB < game.scoreA) return { [game['teamB-id']]: game.scoreB }
     if (game.scoreA === game.scoreB) return { [game['teamA-id']]: game.scoreA, [game['teamB-id']]: game.scoreB }
-
   }
 
-  var games = getGames(tournament.games)
-  var teams = getTeams(tournament.teams)
+  var gamesArr = Object.keys(tournament.games).map(function (item) {
+    return tournament.games[item]
+  })
 
-  // console.log('team 1!!!', teams[0].team1)
-  // console.log(games[0]['teamB-id'])
+  var teamsArr = Object.keys(tournament.teams).map(function (item) {
+    return tournament.teams[item]
+  })
+  console.log(teamsArr)
+  // console.log('hi!!!', gamesArr[0])
 
-  var winners = games.map(getWinners)
-  var loosers = games.map(getLoosers)
-  console.log('winners!!!', winners)
-  console.log('looser!', loosers)
+  // var winners = games.map(getWinners)
+  // var loosers = games.map(getLoosers)
+  // console.log('winners!!!', winners)
+  // console.log('looser!', loosers)
 
 } // <---- end of calculateResultsArray
-
 
 function calculateResultsObject (tournament) {
   // TODO: your code goes here
