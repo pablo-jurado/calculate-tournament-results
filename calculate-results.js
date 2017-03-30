@@ -1,32 +1,31 @@
 function calculateResultsArray (tournament) {
   // TODO: your code goes here
-
-  function getWinners (game) {
-    if (game.scoreA > game.scoreB) return { [game['teamA-id']]: game.scoreA }
-    if (game.scoreB > game.scoreA) return { [game['teamB-id']]: game.scoreB }
+  function objToArray (obj, key) {
+    var arr = []
+    for (var i in obj) {
+      if (!obj.hasOwnProperty(i)) continue
+      var itm = obj[i]
+      if (typeof key === 'string') itm[key] = i
+      arr.push(itm)
+    }
+    return arr
   }
+  var teams = objToArray(tournament.teams, 'team-id')
+  var games = objToArray(tournament.games, 'game-id')
 
-  function getLoosers (game) {
-    if (game.scoreA < game.scoreB) return { [game['teamA-id']]: game.scoreA }
-    if (game.scoreB < game.scoreA) return { [game['teamB-id']]: game.scoreB }
-    if (game.scoreA === game.scoreB) return { [game['teamA-id']]: game.scoreA, [game['teamB-id']]: game.scoreB }
-  }
-
-  var gamesArr = Object.keys(tournament.games).map(function (item) {
-    return tournament.games[item]
+  teams.forEach(function (team) {
+    // reduce games array and return the numbers of games playes
+    team['gamesPlayed'] = games.reduce(function (all, item) {
+      if (item['status'] !== 'aborted') {
+        if (item['teamB-id'] === team['team-id'] || item['teamA-id'] === team['team-id']) {
+          all += 1
+        }
+      }
+      return all
+    }, 0)
   })
 
-  var teamsArr = Object.keys(tournament.teams).map(function (item) {
-    return { [item]: tournament.teams[item] }
-  })
-  // console.log(teamsArr)
-  // console.log('hi!!!', gamesArr[0])
-
-  var winners = gamesArr.map(getWinners)
-  var loosers = gamesArr.map(getLoosers)
-  console.log('winners!!!', winners)
-  console.log('looser!', loosers)
-
+  return teams
 } // <---- end of calculateResultsArray
 
 function calculateResultsObject (tournament) {
