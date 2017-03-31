@@ -1,5 +1,4 @@
 function calculateResultsArray (tournament) {
-  // TODO: your code goes here
   function objToArray (obj, key) {
     var arr = []
     for (var i in obj) {
@@ -139,7 +138,30 @@ function calculateResultsArray (tournament) {
 } // <---- end of calculateResultsArray
 
 function calculateResultsObject (tournament) {
-  // TODO: your code goes here
+  var teamsDataArr = calculateResultsArray(tournament)
+
+  function reformatObj (item) {
+    return {
+      gamesLost: item['games-lost'],
+      gamesPlayed: item['games-played'],
+      gamesTied: item['games-tied'],
+      gamesWon: item['games-won'],
+      place: item['place'],
+      pointDiff: item['points-diff'],
+      pointsLost: item['points-lost'],
+      pointsPlayed: item['points-played'],
+      pointsWon: item['points-won'],
+      teamCaptain: item['team-captain'],
+      teamName: item['team-name'],
+      victoryPoints: item['victory-points']
+    }
+  }
+
+  var teamsObj = teamsDataArr.map(reformatObj)
+
+  console.log(teamsObj)
+
+ //return teamsObj
 }
 // Feel free to add additional functions to this file as needed.
 
