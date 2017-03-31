@@ -19,6 +19,12 @@ function calculateResultsArray (tournament) {
     }
   }
 
+  function getSwissPoints (win, tie, diff) {
+    var points = 0
+    points = (win * 3000) + (tie * 1000) + diff
+    return points
+  }
+
   var teams = objToArray(tournament.teams, 'team-id')
   teams = teams.map(formatTeams)
   var games = objToArray(tournament.games, 'game-id')
@@ -52,15 +58,15 @@ function calculateResultsArray (tournament) {
 
     // check for games won
     team['games-won'] = games.reduce(function (all, item) {
-        if (item['teamB-id'] === team['team-id']) {
-          if (item['scoreB'] > item['scoreA']) {
-            all += 1
-          }
-        } else if (item['teamA-id'] === team['team-id']) {
-          if (item['scoreB'] < item['scoreA']) {
-            all += 1
-          }
+      if (item['teamB-id'] === team['team-id']) {
+        if (item['scoreB'] > item['scoreA']) {
+          all += 1
         }
+      } else if (item['teamA-id'] === team['team-id']) {
+        if (item['scoreB'] < item['scoreA']) {
+          all += 1
+        }
+      }
       return all
     }, 0)
 
@@ -98,13 +104,14 @@ function calculateResultsArray (tournament) {
 
     // get point diff
     team['points-diff'] = team['points-won'] - team['points-lost']
+
+    // get swiss points
+
+    team['victory-points'] = getSwissPoints(team['games-won'], team['games-tied'], team['points-diff'])
   }) // <----- end of forEach
-  console.log(teams)
-  // return teams
+  // console.log(teams)
+  return teams
 } // <---- end of calculateResultsArray
-
-
-
 
 function calculateResultsObject (tournament) {
   // TODO: your code goes here
