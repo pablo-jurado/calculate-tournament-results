@@ -113,9 +113,21 @@ function calculateResultsArray (tournament) {
     team['victory-points'] = getSwissPoints(team['games-won'], team['games-tied'], team['points-diff'])
   }) // <----- end of main forEach
 
-  // TODO: need to sort by points and after that add place number to each team
+  // sort teams by swiss points
+  teams.sort(function (a, b) {
+    return b['victory-points'] - a['victory-points']
+  })
 
-  //console.log(teams)
+  // teams.forEach(function (element, index, array) {
+  //   console.log('a[' + index + '] = ', element['victory-points'])
+  // })
+
+  function addPlace (element, index, array) {
+    element.place = index + 1
+  }
+  // need to add place number to each team
+  teams.forEach(addPlace)
+
   return teams
 } // <---- end of calculateResultsArray
 
@@ -126,6 +138,6 @@ function calculateResultsObject (tournament) {
 
 // this line is needed to export your functions so they can be used by the test suite
 module.exports = {
-  calculateResultsArray: calculateResultsArray
-  // calculateResultsObject: calculateResultsObject
+  calculateResultsArray: calculateResultsArray,
+  calculateResultsObject: calculateResultsObject
 }
