@@ -11,6 +11,14 @@ function calculateResultsArray (tournament) {
     return arr
   }
 
+  var teams = objToArray(tournament.teams, 'team-id').map(formatTeams)
+  var games = objToArray(tournament.games, 'game-id')
+
+  filteredGames = games.filter(function () {
+    // TODO: filter teams or games that did not play
+  })
+
+  // change format from JSON to result array format
   function formatTeams (item) {
     return {
       'team-name': item.name,
@@ -18,16 +26,12 @@ function calculateResultsArray (tournament) {
       'team-id': item['team-id']
     }
   }
-
+  // calculate Victory points by the Swiss format
   function getSwissPoints (win, tie, diff) {
     var points = 0
     points = (win * 3000) + (tie * 1000) + diff
     return points
   }
-
-  var teams = objToArray(tournament.teams, 'team-id')
-  teams = teams.map(formatTeams)
-  var games = objToArray(tournament.games, 'game-id')
 
   teams.forEach(function (team) {
     // reduce games array and return the numbers of games played for each team
@@ -106,10 +110,12 @@ function calculateResultsArray (tournament) {
     team['points-diff'] = team['points-won'] - team['points-lost']
 
     // get swiss points
-
     team['victory-points'] = getSwissPoints(team['games-won'], team['games-tied'], team['points-diff'])
-  }) // <----- end of forEach
-  // console.log(teams)
+  }) // <----- end of main forEach
+
+  // TODO: need to sort by points and after that add place number to each team
+
+  //console.log(teams)
   return teams
 } // <---- end of calculateResultsArray
 
