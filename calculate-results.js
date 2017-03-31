@@ -153,15 +153,29 @@ function calculateResultsObject (tournament) {
       pointsWon: item['points-won'],
       teamCaptain: item['team-captain'],
       teamName: item['team-name'],
-      victoryPoints: item['victory-points']
+      victoryPoints: item['victory-points'],
+      teamId: item['team-id']
     }
   }
 
-  var teamsObj = teamsDataArr.map(reformatObj)
+  var reformatArr = teamsDataArr.map(reformatObj)
 
-  console.log(teamsObj)
+  // convert arr to obj, asign team id as a obj key
+  function arrToObj (arr) {
+    var obj = {}
+    arr.forEach(function (item) {
+      var key = item['teamId']
+      delete item['teamId']
+      obj[key] = item
+    })
+    return obj
+  }
 
- //return teamsObj
+  var teamsObj = arrToObj(reformatArr)
+
+  // console.log(teamsObj)
+
+  return teamsObj
 }
 // Feel free to add additional functions to this file as needed.
 
