@@ -11,13 +11,6 @@ function calculateResultsArray (tournament) {
     return arr
   }
 
-  var teams = objToArray(tournament.teams, 'team-id').map(formatTeams)
-  var games = objToArray(tournament.games, 'game-id')
-
-  filteredGames = games.filter(function () {
-    // TODO: filter teams or games that did not play
-  })
-
   // change format from JSON to result array format
   function formatTeams (item) {
     return {
@@ -26,6 +19,19 @@ function calculateResultsArray (tournament) {
       'team-id': item['team-id']
     }
   }
+  // filter aborted games
+  function filterAbortedGames (item) {
+    if (item.status !== 'aborted') return item
+  }
+
+  var teams = objToArray(tournament.teams, 'team-id').map(formatTeams)
+  var games = objToArray(tournament.games, 'game-id').filter(filterAbortedGames)
+
+  // filter teams that did not play
+  function filterTeamsNotPlayed (item) {
+    if (item['games-played'] !== 0) return item
+  }
+
   // calculate Victory points by the Swiss format
   function getSwissPoints (win, tie, diff) {
     var points = 0
@@ -33,13 +39,22 @@ function calculateResultsArray (tournament) {
     return points
   }
 
+  // sort teams by swiss points
+  function sortByPoints (a, b) {
+    return b['victory-points'] - a['victory-points']
+  }
+
+  // add place number (only used after sorting)
+  function addPlace (element, index, array) {
+    element.place = index + 1
+  }
+
+  // main forEach for reduce by team
   teams.forEach(function (team) {
     // reduce games array and return the numbers of games played for each team
     team['games-played'] = games.reduce(function (all, item) {
-      if (item['status'] !== 'aborted') {
-        if (item['teamB-id'] === team['team-id'] || item['teamA-id'] === team['team-id']) {
-          all += 1
-        }
+      if (item['teamB-id'] === team['team-id'] || item['teamA-id'] === team['team-id']) {
+        all += 1
       }
       return all
     }, 0)
@@ -113,18 +128,10 @@ function calculateResultsArray (tournament) {
     team['victory-points'] = getSwissPoints(team['games-won'], team['games-tied'], team['points-diff'])
   }) // <----- end of main forEach
 
-  // sort teams by swiss points
-  teams.sort(function (a, b) {
-    return b['victory-points'] - a['victory-points']
-  })
+  teams = teams.filter(filterTeamsNotPlayed)
 
-  // teams.forEach(function (element, index, array) {
-  //   console.log('a[' + index + '] = ', element['victory-points'])
-  // })
+  teams.sort(sortByPoints)
 
-  function addPlace (element, index, array) {
-    element.place = index + 1
-  }
   // need to add place number to each team
   teams.forEach(addPlace)
 
