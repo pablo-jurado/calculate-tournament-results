@@ -36,13 +36,15 @@ function calculateResultsArray (tournament) {
 
     // check for games lost
     team['games-lost'] = games.reduce(function (all, item) {
-      if (item['teamB-id'] === team['team-id']) {
-        if (item['scoreB'] < item['scoreA']) {
-          all += 1
-        }
-      } else if (item['teamA-id'] === team['team-id']) {
-        if (item['scoreB'] > item['scoreA']) {
-          all += 1
+      if (item['status'] !== 'aborted') {
+        if (item['teamB-id'] === team['team-id']) {
+          if (item['scoreB'] < item['scoreA']) {
+            all += 1
+          }
+        } else if (item['teamA-id'] === team['team-id']) {
+          if (item['scoreB'] > item['scoreA']) {
+            all += 1
+          }
         }
       }
       return all
@@ -50,15 +52,15 @@ function calculateResultsArray (tournament) {
 
     // check for games won
     team['games-won'] = games.reduce(function (all, item) {
-      if (item['teamB-id'] === team['team-id']) {
-        if (item['scoreB'] > item['scoreA']) {
-          all += 1
+        if (item['teamB-id'] === team['team-id']) {
+          if (item['scoreB'] > item['scoreA']) {
+            all += 1
+          }
+        } else if (item['teamA-id'] === team['team-id']) {
+          if (item['scoreB'] < item['scoreA']) {
+            all += 1
+          }
         }
-      } else if (item['teamA-id'] === team['team-id']) {
-        if (item['scoreB'] < item['scoreA']) {
-          all += 1
-        }
-      }
       return all
     }, 0)
 
@@ -81,8 +83,22 @@ function calculateResultsArray (tournament) {
       return all
     }, 0)
 
-  })
+    // get points-won
+    team['points-won'] = games.reduce(function (all, item) {
+      if (item['teamB-id'] === team['team-id']) {
+        all += item['scoreB']
+      } else if (item['teamA-id'] === team['team-id']) {
+        all += item['scoreA']
+      }
+      return all
+    }, 0)
 
+    // get point lost
+    team['points-lost'] = team['points-played'] - team['points-won']
+
+    // get point diff
+    team['points-diff'] = team['points-won'] - team['points-lost']
+  }) // <----- end of forEach
   console.log(teams)
   // return teams
 } // <---- end of calculateResultsArray
