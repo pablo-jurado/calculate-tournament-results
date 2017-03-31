@@ -58,10 +58,8 @@ function calculateResultsArray (tournament) {
       }
       return all
     }, 0)
-  })
 
-  // check for lost games
-  teams.forEach(function (team) {
+    // check for lost games
     function getGamesLost (all, item) {
       if (item['teamB-id'] === team['team-id']) {
         if (item['scoreB'] < item['scoreA']) all++
@@ -71,10 +69,8 @@ function calculateResultsArray (tournament) {
       return all
     }
     team['games-lost'] = games.reduce(getGamesLost, 0)
-  })
 
-  // check for games won
-  teams.forEach(function (team) {
+    // check for games won
     function getGamesWon (all, item) {
       if (item['teamB-id'] === team['team-id']) {
         if (item['scoreB'] > item['scoreA']) all++
@@ -84,10 +80,8 @@ function calculateResultsArray (tournament) {
       return all
     }
     team['games-won'] = games.reduce(getGamesWon, 0)
-  })
 
-  // check for tied games
-  teams.forEach(function (team) {
+    // check for tied games
     function getGamesTied (all, item) {
       if (item['teamB-id'] === team['team-id'] || item['teamA-id'] === team['team-id']) {
         if (item['scoreB'] === item['scoreA']) all++
@@ -95,10 +89,8 @@ function calculateResultsArray (tournament) {
       return all
     }
     team['games-tied'] = games.reduce(getGamesTied, 0)
-  })
 
-  // get points played
-  teams.forEach(function (team) {
+    // get points played
     function getPointPLayed (all, item) {
       if (item['teamB-id'] === team['team-id'] || item['teamA-id'] === team['team-id']) {
         var result = item['scoreB'] + item['scoreA']
@@ -107,9 +99,8 @@ function calculateResultsArray (tournament) {
       return all
     }
     team['points-played'] = games.reduce(getPointPLayed, 0)
-  })
-  // get points-won
-  teams.forEach(function (team) {
+
+    // get points-won
     function getPointsWon (all, item) {
       if (item['teamB-id'] === team['team-id']) {
         all += item['scoreB']
@@ -119,9 +110,8 @@ function calculateResultsArray (tournament) {
       return all
     }
     team['points-won'] = games.reduce(getPointsWon, 0)
-  })
+
     // get point lost
-  teams.forEach(function (team) {
     team['points-lost'] = team['points-played'] - team['points-won']
     // get point diff
     team['points-diff'] = team['points-won'] - team['points-lost']
@@ -133,7 +123,7 @@ function calculateResultsArray (tournament) {
 
   teams.sort(sortByPoints)
 
-  // need to add place number to each team
+  // add place number to each team
   teams.forEach(addPlace)
 
   return teams
@@ -177,7 +167,6 @@ function calculateResultsObject (tournament) {
 
   return teamsObj
 }
-// Feel free to add additional functions to this file as needed.
 
 // this line is needed to export your functions so they can be used by the test suite
 module.exports = {
