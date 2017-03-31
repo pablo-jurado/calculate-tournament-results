@@ -1,4 +1,5 @@
 function calculateResultsArray (tournament) {
+  // takes JSON and transform to array
   function objToArray (obj, key) {
     var arr = []
     for (var i in obj) {
@@ -10,7 +11,7 @@ function calculateResultsArray (tournament) {
     return arr
   }
 
-  // change format from JSON to result array format
+  // change format from JSON to array result format
   function formatTeams (item) {
     return {
       'team-name': item.name,
@@ -22,9 +23,6 @@ function calculateResultsArray (tournament) {
   function filterAbortedGames (item) {
     if (item.status !== 'aborted') return item
   }
-
-  var teams = objToArray(tournament.teams, 'team-id').map(formatTeams)
-  var games = objToArray(tournament.games, 'game-id').filter(filterAbortedGames)
 
   // filter teams that did not play
   function filterTeamsNotPlayed (item) {
@@ -48,6 +46,9 @@ function calculateResultsArray (tournament) {
     element.place = index + 1
   }
 
+  var teams = objToArray(tournament.teams, 'team-id').map(formatTeams)
+  var games = objToArray(tournament.games, 'game-id').filter(filterAbortedGames)
+
   // main forEach for reduce by team
   teams.forEach(function (team) {
     // reduce games array and return the numbers of games played for each team
@@ -57,72 +58,73 @@ function calculateResultsArray (tournament) {
       }
       return all
     }, 0)
+  })
 
-    // check for games lost
-    team['games-lost'] = games.reduce(function (all, item) {
-      if (item['status'] !== 'aborted') {
-        if (item['teamB-id'] === team['team-id']) {
-          if (item['scoreB'] < item['scoreA']) {
-            all += 1
-          }
-        } else if (item['teamA-id'] === team['team-id']) {
-          if (item['scoreB'] > item['scoreA']) {
-            all += 1
-          }
-        }
-      }
-      return all
-    }, 0)
-
-    // check for games won
-    team['games-won'] = games.reduce(function (all, item) {
+  // check for lost games
+  teams.forEach(function (team) {
+    function getGamesLost (all, item) {
       if (item['teamB-id'] === team['team-id']) {
-        if (item['scoreB'] > item['scoreA']) {
-          all += 1
-        }
+        if (item['scoreB'] < item['scoreA']) all++
       } else if (item['teamA-id'] === team['team-id']) {
-        if (item['scoreB'] < item['scoreA']) {
-          all += 1
-        }
+        if (item['scoreB'] > item['scoreA']) all++
       }
       return all
-    }, 0)
+    }
+    team['games-lost'] = games.reduce(getGamesLost, 0)
+  })
 
-    // check for tied games
-    team['games-tied'] = games.reduce(function (all, item) {
+  // check for games won
+  teams.forEach(function (team) {
+    function getGamesWon (all, item) {
+      if (item['teamB-id'] === team['team-id']) {
+        if (item['scoreB'] > item['scoreA']) all++
+      } else if (item['teamA-id'] === team['team-id']) {
+        if (item['scoreB'] < item['scoreA']) all++
+      }
+      return all
+    }
+    team['games-won'] = games.reduce(getGamesWon, 0)
+  })
+
+  // check for tied games
+  teams.forEach(function (team) {
+    function getGamesTied (all, item) {
       if (item['teamB-id'] === team['team-id'] || item['teamA-id'] === team['team-id']) {
-        if (item['scoreB'] === item['scoreA']) {
-          all += 1
-        }
+        if (item['scoreB'] === item['scoreA']) all++
       }
       return all
-    }, 0)
+    }
+    team['games-tied'] = games.reduce(getGamesTied, 0)
+  })
 
-    // get points played
-    team['points-played'] = games.reduce(function (all, item) {
+  // get points played
+  teams.forEach(function (team) {
+    function getPointPLayed (all, item) {
       if (item['teamB-id'] === team['team-id'] || item['teamA-id'] === team['team-id']) {
         var result = item['scoreB'] + item['scoreA']
         all += result
       }
       return all
-    }, 0)
-
-    // get points-won
-    team['points-won'] = games.reduce(function (all, item) {
+    }
+    team['points-played'] = games.reduce(getPointPLayed, 0)
+  })
+  // get points-won
+  teams.forEach(function (team) {
+    function getPointsWon (all, item) {
       if (item['teamB-id'] === team['team-id']) {
         all += item['scoreB']
       } else if (item['teamA-id'] === team['team-id']) {
         all += item['scoreA']
       }
       return all
-    }, 0)
-
+    }
+    team['points-won'] = games.reduce(getPointsWon, 0)
+  })
     // get point lost
+  teams.forEach(function (team) {
     team['points-lost'] = team['points-played'] - team['points-won']
-
     // get point diff
     team['points-diff'] = team['points-won'] - team['points-lost']
-
     // get swiss points
     team['victory-points'] = getSwissPoints(team['games-won'], team['games-tied'], team['points-diff'])
   }) // <----- end of main forEach
@@ -172,8 +174,6 @@ function calculateResultsObject (tournament) {
   }
 
   var teamsObj = arrToObj(reformatArr)
-
-  // console.log(teamsObj)
 
   return teamsObj
 }
