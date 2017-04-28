@@ -1,50 +1,51 @@
+// takes JSON and transform to array
+function objToArray (obj, key) {
+  var arr = []
+  for (var i in obj) {
+    if (!obj.hasOwnProperty(i)) continue
+    var itm = obj[i]
+    if (typeof key === 'string') itm[key] = i
+    arr.push(itm)
+  }
+  return arr
+}
+
+// change format from JSON to array result format
+function formatTeams (item) {
+  return {
+    'team-name': item.name,
+    'team-captain': item.captain,
+    'team-id': item['team-id']
+  }
+}
+// filter aborted games
+function filterAbortedGames (item) {
+  if (item.status !== 'aborted') return item
+}
+
+// filter teams that did not play
+function filterTeamsNotPlayed (item) {
+  if (item['games-played'] !== 0) return item
+}
+
+// calculate Victory points by the Swiss format
+function getSwissPoints (win, tie, diff) {
+  var points = 0
+  points = (win * 3000) + (tie * 1000) + diff
+  return points
+}
+
+// sort teams by swiss points
+function sortByPoints (a, b) {
+  return b['victory-points'] - a['victory-points']
+}
+
+// add place number (only used after sorting)
+function addPlace (element, index, array) {
+  element.place = index + 1
+}
+
 function calculateResultsArray (tournament) {
-  // takes JSON and transform to array
-  function objToArray (obj, key) {
-    var arr = []
-    for (var i in obj) {
-      if (!obj.hasOwnProperty(i)) continue
-      var itm = obj[i]
-      if (typeof key === 'string') itm[key] = i
-      arr.push(itm)
-    }
-    return arr
-  }
-
-  // change format from JSON to array result format
-  function formatTeams (item) {
-    return {
-      'team-name': item.name,
-      'team-captain': item.captain,
-      'team-id': item['team-id']
-    }
-  }
-  // filter aborted games
-  function filterAbortedGames (item) {
-    if (item.status !== 'aborted') return item
-  }
-
-  // filter teams that did not play
-  function filterTeamsNotPlayed (item) {
-    if (item['games-played'] !== 0) return item
-  }
-
-  // calculate Victory points by the Swiss format
-  function getSwissPoints (win, tie, diff) {
-    var points = 0
-    points = (win * 3000) + (tie * 1000) + diff
-    return points
-  }
-
-  // sort teams by swiss points
-  function sortByPoints (a, b) {
-    return b['victory-points'] - a['victory-points']
-  }
-
-  // add place number (only used after sorting)
-  function addPlace (element, index, array) {
-    element.place = index + 1
-  }
 
   var teams = objToArray(tournament.teams, 'team-id').map(formatTeams)
   var games = objToArray(tournament.games, 'game-id').filter(filterAbortedGames)
