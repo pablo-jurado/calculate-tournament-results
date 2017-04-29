@@ -46,7 +46,6 @@ function addPlace (element, index, array) {
 }
 
 function calculateResultsArray (tournament) {
-
   var teams = objToArray(tournament.teams, 'team-id').map(formatTeams)
   var games = objToArray(tournament.games, 'game-id').filter(filterAbortedGames)
 
@@ -168,9 +167,10 @@ function calculateResultsObject (tournament) {
 
   return teamsObj
 }
+console.log(calculateResultsArray(tournament))
 
 // this line is needed to export your functions so they can be used by the test suite
-module.exports = {
-  calculateResultsArray: calculateResultsArray,
-  calculateResultsObject: calculateResultsObject
-}
+// module.exports = {
+//   calculateResultsArray: calculateResultsArray,
+//   calculateResultsObject: calculateResultsObject
+// }
