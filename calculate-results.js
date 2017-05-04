@@ -167,7 +167,6 @@ function calculateResultsObject (tournament) {
 
   return teamsObj
 }
-console.log(calculateResultsArray(tournament))
 
 // this line is needed to export your functions so they can be used by the test suite
 // module.exports = {
