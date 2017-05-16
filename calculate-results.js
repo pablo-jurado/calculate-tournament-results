@@ -23,9 +23,13 @@ function calculateResultsArray (tournament) {
     if (game['scoreB'] > game['scoreA']) winner = game['teamB-id']
     if (game['scoreB'] < game['scoreA']) winner = game['teamA-id']
     if (game['scoreB'] === game['scoreA']) winner = game['teamB-id'] + ' tied ' + game['teamA-id']
-    console.log(game.game, winner)
+    // console.log(game.game, winner)
   })
 }
+
+// let teamObj = arrGames.reduce((acc, current) => {
+//   current['teamB-id']
+// }, {})
 
 function calculateResultsObject (tournament) {
 
